@@ -890,14 +890,14 @@ class RegistWindow(Screen):
             gender=''  
     
 
-class ForcaPOSApp(App):
+class POSBERRYApp(App):
     theme_cls = ThemeManager()
     def Transaksi_Berhasil(self,*args):
         TransaksiBerhasil().open()
     def build(self):
 
         main_widget = Builder.load_file(
-            os.path.join(os.path.dirname(__file__), "./designposD1.kv")
+            os.path.join(os.path.dirname(__file__), "./posberry.kv")
         )
         
         self.bottom_navigation_remove_mobile(main_widget)
@@ -912,4 +912,4 @@ class ForcaPOSApp(App):
 
  
 if __name__ == "__main__":
-    ForcaPOSApp().run()
+    POSBERRYApp().run()
