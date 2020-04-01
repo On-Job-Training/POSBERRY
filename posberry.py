@@ -86,6 +86,16 @@ class TransaksiBerhasil(Popup):
         resetText=1
         self.dismiss()
         print('keluar')
+class TransaksiGagal(Popup):
+    def FadePopup(self):
+        #self.manager.current='login'#program untuk pindah ke layout yang lain berdasarkan name window
+        self.dismiss()
+        print('gajadiKeluar')
+    def FadePopupYes(self):
+        global resetText
+        resetText=1
+        self.dismiss()
+        print('keluar') 
 class WelcomeBack(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -234,6 +244,10 @@ class InvalidChange(Popup):
         print('keluar')
 class HackedDemoNavDrawer(MDNavigationDrawer):
     # DO NOT USE
+    def Transaksi_Gagal(self,*args):
+        TransaksiGagal().open()
+    def Transaksi_Berhasil(self,*args):
+        TransaksiGagal().open()
     def add_widget(self, widget, index=0):
         if issubclass(widget.__class__, BaseListItem):
             self._list.add_widget(widget, index)
@@ -263,6 +277,8 @@ class HomeWindow(Screen):
         self.HargaBarang=[]
     def Transaksi_Berhasil(self,*args):
         TransaksiBerhasil().open()
+    def Transaksi_Gagal(self,*args):
+        TransaksiGagal().open()
     def SoldOut(self,*args):
         SoldOutWindow().open()
     def __init__(self, **kwargs):
@@ -894,6 +910,8 @@ class POSBERRYApp(App):
     theme_cls = ThemeManager()
     def Transaksi_Berhasil(self,*args):
         TransaksiBerhasil().open()
+    def Transaksi_Gagal(self,*args):
+        TransaksiGagal().open()
     def build(self):
 
         main_widget = Builder.load_file(
