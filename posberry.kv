@@ -3118,3 +3118,73 @@ ScreenManager:
             BoxLayout:
                 size_hint_y:.2
 
+#POP UP Untuk konfirmasi ketika LOGOUT
+<LogoutWindow>: 
+    title:'Logout'
+    size_hint:.5,.5
+    auto_dismiss: False
+    BoxLayout:  
+        canvas.before:
+            Color:
+                rgba: utils.get_color_from_hex('#ffffff')  
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius:5,5,5,5
+        orientation:'vertical'
+        spacing:5
+        BoxLayout:
+            
+            Label:
+                font_size:20
+                align:'center'
+                text:'Are you sure ?'
+                color: utils.get_color_from_hex('#000000') 
+        BoxLayout: 
+            orientation:'horizontal'
+            size_hint_y:.2  
+            spacing:30
+            BoxLayout:
+                size_hint_x:.7
+            BoxLayout:   
+                size_hint_x:.2
+                padding:10
+                canvas:
+                    Color:
+                        rgba: utils.get_color_from_hex('#F60A0A') 
+                    RoundedRectangle:
+                        pos: self.pos
+                        size:self.size
+                        radius: [15, 15, 15, 15]
+                Button:   
+                    bold:True
+                    font_size:13
+                    background_color:0,0,0,0
+                    background_normal:'' 
+                    text:'NO'
+                    pos:self.pos
+                    color:utils.get_color_from_hex('#ffffff')
+                    on_release : app.root.current = "register"
+            BoxLayout:   
+                size_hint_x:.2
+                padding:10
+                canvas:
+                    Color:
+                        rgba: utils.get_color_from_hex('#0096FB') 
+                    RoundedRectangle:
+                        pos: self.pos
+                        size:self.size
+                        radius: [15, 15, 15, 15]
+                Button:   
+                    bold:True
+                    font_size:13
+                    background_color:0,0,0,0
+                    background_normal:'' 
+                    text:'YES'
+                    pos:self.pos
+                    color:utils.get_color_from_hex('#ffffff') 
+            BoxLayout:
+                size_hint_x:.1
+        BoxLayout:
+
+            size_hint_y:.3
