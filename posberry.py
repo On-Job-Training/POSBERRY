@@ -96,6 +96,16 @@ class TransaksiGagal(Popup):
         resetText=1
         self.dismiss()
         print('keluar') 
+class LogoutWindow(Popup):
+    def FadePopup(self):
+        #self.manager.current='login'#program untuk pindah ke layout yang lain berdasarkan name window
+        self.dismiss()
+        print('gajadiKeluar')
+    def FadePopupYes(self):
+        global resetText
+        resetText=1
+        self.dismiss()
+        print('keluar') 
 class WelcomeBack(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -248,6 +258,8 @@ class HackedDemoNavDrawer(MDNavigationDrawer):
         TransaksiGagal().open()
     def Transaksi_Berhasil(self,*args):
         TransaksiGagal().open()
+    def Logout_Window(self,*args):
+        LogoutWindow().open()
     def add_widget(self, widget, index=0):
         if issubclass(widget.__class__, BaseListItem):
             self._list.add_widget(widget, index)
@@ -279,6 +291,8 @@ class HomeWindow(Screen):
         TransaksiBerhasil().open()
     def Transaksi_Gagal(self,*args):
         TransaksiGagal().open()
+    def Logout_Window(self,*args):
+        LoginWindow().open()
     def SoldOut(self,*args):
         SoldOutWindow().open()
     def __init__(self, **kwargs):
@@ -912,6 +926,8 @@ class POSBERRYApp(App):
         TransaksiBerhasil().open()
     def Transaksi_Gagal(self,*args):
         TransaksiGagal().open()
+    def Logout_Window(self,*args):
+        LoginWindow().open()
     def build(self):
 
         main_widget = Builder.load_file(
