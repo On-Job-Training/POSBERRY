@@ -3489,3 +3489,252 @@ ScreenManager:
                     size_hint_x:.2
             BoxLayout:
                 size_hint_y:.2
+
+#POP UP Ketika Username sudah digunakan (REGISTER WINDOW)
+<UsernameAlready>: 
+    title:'Error'
+    size_hint:.4,.4
+    auto_dismiss: False
+    BoxLayout:  
+        canvas.before:
+            Color:
+                rgba: utils.get_color_from_hex('#ffffff')  
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius:5,5,5,5
+        orientation:'vertical'
+        spacing:5
+        BoxLayout:
+            orientation:"vertical"
+            BoxLayout:
+                size_hint_y:.1
+            BoxLayout:
+                size_hint_y:.8
+                Image:
+                    valign:'top'
+                    source: 'ikon/error.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    #size:100,100
+                    keep_ratio: True
+                    allow_stretch: True
+            BoxLayout:
+                size_hint_y:.1       
+            BoxLayout:
+                size_hint_y:.3
+                orientation:'vertical'
+                spacing:0
+                FlatButton:
+                    text:'Username already used !'
+                    color: utils.get_color_from_hex('#F80606')
+                
+            BoxLayout:
+                size_hint_y:.2
+           
+            BoxLayout:
+                size_hint_y:.3
+                BoxLayout:
+                    size_hint_x:.2
+                Button:
+                    size_hint_x:.1
+                    text:'OK'
+                    bold:True
+                    font_size:15
+                    color: utils.get_color_from_hex('#ffffff')
+                    background_normal:''
+                    background_color:utils.get_color_from_hex('#31C2F8')
+                BoxLayout:
+                    size_hint_x:.2
+            BoxLayout:
+                size_hint_y:.2
+
+#POP UP Ketika Nomor Telepon sudah digunakan (REGISTER WINDOW)
+<PhoneNumberAlready>: 
+    title:'Error'
+    size_hint:.4,.4
+    auto_dismiss: False
+    BoxLayout:  
+        canvas.before:
+            Color:
+                rgba: utils.get_color_from_hex('#ffffff')  
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius:5,5,5,5
+        orientation:'vertical'
+        spacing:5
+        BoxLayout:
+            orientation:"vertical"
+            BoxLayout:
+                size_hint_y:.1
+            BoxLayout:
+                size_hint_y:.8
+                Image:
+                    valign:'top'
+                    source: 'ikon/error.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    #size:100,100
+                    keep_ratio: True
+                    allow_stretch: True
+            BoxLayout:
+                size_hint_y:.1       
+            BoxLayout:
+                size_hint_y:.3
+                orientation:'vertical'
+                spacing:0
+                FlatButton:
+                    text:'Phone number already used !'
+                    color: utils.get_color_from_hex('#F80606')
+                
+            BoxLayout:
+                size_hint_y:.2
+           
+            BoxLayout:
+                size_hint_y:.3
+                BoxLayout:
+                    size_hint_x:.2
+                Button:
+                    size_hint_x:.1
+                    text:'OK'
+                    bold:True
+                    font_size:15
+                    color: utils.get_color_from_hex('#ffffff')
+                    background_normal:''
+                    background_color:utils.get_color_from_hex('#31C2F8')
+                BoxLayout:
+                    size_hint_x:.2
+            BoxLayout:
+                size_hint_y:.2
+
+#POP UP Ketika Password harus 8 karakter (REGISTER WINDOW)
+<InvalidPassword>: 
+    title:'Error'
+    size_hint:.4,.4
+    auto_dismiss: False
+    BoxLayout:  
+        canvas.before:
+            Color:
+                rgba: utils.get_color_from_hex('#ffffff')  
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius:5,5,5,5
+        orientation:'vertical'
+        spacing:5
+        BoxLayout:
+            orientation:"vertical"
+            BoxLayout:
+                size_hint_y:.1
+            BoxLayout:
+                size_hint_y:.2
+                Image:
+                    valign:'top'
+                    source: 'ikon/error.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    size:100,100
+                    keep_ratio: True
+                    allow_stretch: True
+            BoxLayout:
+                size_hint_y:.1       
+            BoxLayout:
+                size_hint_y:.4
+                orientation:'vertical'
+                spacing:0
+                FlatButton:
+                    text:'Password must be at least'
+                    color: utils.get_color_from_hex('#F11B29')
+                FlatButton:
+                    text:'8 characters long !'
+                    color: utils.get_color_from_hex('#F11B29')
+            BoxLayout:
+                size_hint_y:.2
+           
+            BoxLayout:
+                size_hint_y:.3
+                BoxLayout:
+                    size_hint_x:.2
+                Button:
+                    size_hint_x:.1
+                    text:'OK'
+                    bold:True
+                    font_size:15
+                    color: utils.get_color_from_hex('#ffffff')
+                    background_normal:''
+                    background_color:utils.get_color_from_hex('#31C2F8')
+                BoxLayout:
+                    size_hint_x:.2
+            BoxLayout:
+                size_hint_y:.2
+
+#POP UP untuk Notifikasi (REGISTER WINDOW)
+<NotificationWindow>: 
+    title:'Error'
+    size_hint:.4,.4
+    auto_dismiss: False
+    BoxLayout:  
+        canvas.before:
+            Color:
+                rgba: utils.get_color_from_hex('#ffffff')  
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius:5,5,5,5
+        orientation:'vertical'
+        spacing:5
+        BoxLayout:
+            orientation:"vertical"
+            BoxLayout:
+                size_hint_y:.1
+            BoxLayout:
+                size_hint_y:.2
+                Image:
+                    valign:'top'
+                    source: 'ikon/error.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    size:100,100
+                    keep_ratio: True
+                    allow_stretch: True
+            BoxLayout:
+                size_hint_y:.1       
+            BoxLayout:
+                size_hint_y:.4
+                #orientation:'vertical'
+                #spacing:0
+                #FlatButton:
+                    #text:'Password must be at least'
+                    #color: utils.get_color_from_hex('#F11B29')
+                #FlatButton:
+                    #text:'8 characters long !'
+                    #color: utils.get_color_from_hex('#F11B29')
+                Label:
+                    id:info_regist_new
+                    text:''
+                    markup: True
+                    size_hint_y: None
+                    bold:True
+                    text:''
+                    #color: utils.get_color_from_hex('#ff0505')   
+                    font_size:15
+            BoxLayout:
+                size_hint_y:.2
+           
+            BoxLayout:
+                size_hint_y:.3
+                BoxLayout:
+                    size_hint_x:.2
+                Button:
+                    size_hint_x:.1
+                    text:'OK'
+                    bold:True
+                    font_size:15
+                    color: utils.get_color_from_hex('#ffffff')
+                    background_normal:''
+                    background_color:utils.get_color_from_hex('#31C2F8')
+                BoxLayout:
+                    size_hint_x:.2
+            BoxLayout:
+                size_hint_y:.2
