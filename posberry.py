@@ -2,34 +2,42 @@ import os
 import os.path
 from win32com.client import Dispatch
 from kivy.app import App
+from kivy.properties import ObjectProperty
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 from kivy.config import Config
 from kivy.core.window import Window
 from kivy.uix.checkbox import CheckBox
+import subprocess
 import xlwt
 import locale
 import xlrd
 import re
 import datetime
+#from datetime import datetime
 from kivy.uix.popup import Popup
 from xlutils.copy import copy
 from kivy.properties import StringProperty
 from kivy.uix.screenmanager import ScreenManager, Screen 
 from kivy.config import Config
 from xlwt import Workbook 
+from kivy.uix.widget import Widget
 from kivymd.list import BaseListItem
 from kivymd.material_resources import DEVICE_TYPE
 from kivymd.navigationdrawer import MDNavigationDrawer, NavigationDrawerHeaderBase
 from kivymd.theming import ThemeManager
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '600')
+
+saat_ini = datetime.datetime.now()
+jam = saat_ini.strftime('%H:%M:%S')
 data=0
 scandata=0
 rows=1
 NamaUser=''
 cols=0
 GenderAsli=''
+Cash=''
 gender=''
 resetText=0
 JumlahUser=1
@@ -37,6 +45,7 @@ IntegerToRupiah=0
 rowBarang=1
 JdataPenjualan=1
 kondisiPembayaran=0
+kembalian=0
 change=0
 totalBarang=0
 ParamBarangArray=0
@@ -45,6 +54,7 @@ nu_text=''
 kondImage=''
 screen_manager = ScreenManager()
 waktu=datetime.datetime.now()
+datafile='Penjualan_'+waktu.strftime("%d-%m-%Y")+'.xls'
 simpanwaktu= waktu.strftime("%d-%m-%Y")
 class setNamePopup(Popup):
     def FadePopup(self):
@@ -66,6 +76,16 @@ class Required(Popup):
         resetText=1
         self.dismiss()
         print('keluar')
+class TransaksiGagal(Popup):
+    def FadePopup(self):
+        #self.manager.current='login'#program untuk pindah ke layout yang lain berdasarkan name window
+        self.dismiss()
+        print('gajadiKeluar')
+    def FadePopupYes(self):
+        global resetText
+        resetText=1
+        self.dismiss()
+        print('keluar') 
 class Invalid(Popup):
     def FadePopup(self):
         #self.manager.current='login'#program untuk pindah ke layout yang lain berdasarkan name window
@@ -86,7 +106,7 @@ class TransaksiBerhasil(Popup):
         resetText=1
         self.dismiss()
         print('keluar')
-class TransaksiGagal(Popup):
+class DataNotComplete(Popup):
     def FadePopup(self):
         #self.manager.current='login'#program untuk pindah ke layout yang lain berdasarkan name window
         self.dismiss()
@@ -95,8 +115,8 @@ class TransaksiGagal(Popup):
         global resetText
         resetText=1
         self.dismiss()
-        print('keluar') 
-class LogoutWindow(Popup):
+        print('keluar')
+class InvalidName(Popup):
     def FadePopup(self):
         #self.manager.current='login'#program untuk pindah ke layout yang lain berdasarkan name window
         self.dismiss()
@@ -105,7 +125,57 @@ class LogoutWindow(Popup):
         global resetText
         resetText=1
         self.dismiss()
-        print('keluar') 
+        print('keluar')
+class InvalidNumbers(Popup):
+    def FadePopup(self):
+        #self.manager.current='login'#program untuk pindah ke layout yang lain berdasarkan name window
+        self.dismiss()
+        print('gajadiKeluar')
+    def FadePopupYes(self):
+        global resetText
+        resetText=1
+        self.dismiss()
+        print('keluar')
+class InvalidPhoneNumber(Popup):
+    def FadePopup(self):
+        #self.manager.current='login'#program untuk pindah ke layout yang lain berdasarkan name window
+        self.dismiss()
+        print('gajadiKeluar')
+    def FadePopupYes(self):
+        global resetText
+        resetText=1
+        self.dismiss()
+        print('keluar')
+class UsernameAlready(Popup):
+    def FadePopup(self):
+        #self.manager.current='login'#program untuk pindah ke layout yang lain berdasarkan name window
+        self.dismiss()
+        print('gajadiKeluar')
+    def FadePopupYes(self):
+        global resetText
+        resetText=1
+        self.dismiss()
+        print('keluar')
+class PhoneNumberAlready(Popup):
+    def FadePopup(self):
+        #self.manager.current='login'#program untuk pindah ke layout yang lain berdasarkan name window
+        self.dismiss()
+        print('gajadiKeluar')
+    def FadePopupYes(self):
+        global resetText
+        resetText=1
+        self.dismiss()
+        print('keluar')
+class InvalidPassword(Popup):
+    def FadePopup(self):
+        #self.manager.current='login'#program untuk pindah ke layout yang lain berdasarkan name window
+        self.dismiss()
+        print('gajadiKeluar')
+    def FadePopupYes(self):
+        global resetText
+        resetText=1
+        self.dismiss()
+        print('keluar')
 class WelcomeBack(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -115,20 +185,30 @@ class WelcomeBack(Screen):
         self.gender=[]
     def notRegister(self,*args):
         NotRegistered().open()
-    def Required(self,*args):
+    def Required(self):
         Required().open()
     def Invalid(self,*args):
         Invalid().open()
+    def InvalidChange(self,*args):
+        InvalidChange().open()
     def loginreset(self):
         self.ids.username_field.text=''
         self.ids.pwd_field.text=''
         self.ids.money_field.text=''
         self.ids.info.text=''
+    def rupiah_format(self):
+        global change
+        global IntegerToRupiah
+        locale.setlocale(locale.LC_NUMERIC, 'IND')
+        IntegerToRupiah = locale.format("%.*f", (2, int(change)), True)
+        print(IntegerToRupiah)
     def validate_user(self):
         global NamaUser
         global reset
         global kondImage
         global GenderAsli
+        global IntegerToRupiah
+        global change#uang kembalian yang dibawa kasir dan untuk perhitungan dalam pembayaran
         loc = ("data.xls")
         wb = xlrd.open_workbook(loc)
         sheet = wb.sheet_by_index(0)
@@ -141,21 +221,20 @@ class WelcomeBack(Screen):
             self.password.append(sheet.cell_value(row,6))
             self.namauser.append(sheet.cell_value(row,1))
             self.gender.append(sheet.cell_value(row,4))
-            print(self.username)
+            '''print(self.username)
             print(self.password)
             print(self.namauser)
-            print(self.gender)
+            print(self.gender)'''
         #parameter untuk mengecheck nilai pada array
         UserData=-1
         user= self.ids.username_field
         pwd= self.ids.pwd_field
         kembalian= self.ids.money_field
         info= self.ids.info
-        os.system("taskkill /im EXCEL.EXE /f")#Untuk Meng - Close Program Excel yang running
         uname=user.text
         passw=pwd.text
         UangKembalian=kembalian.text
-        UangKembalianUntukHome='Rp '+ str(UangKembalian)
+        change=UangKembalian
         xparamUangKembalian=re.findall("[a-zA-Z]",UangKembalian)
         xparamUangKembalian2=1
         panjangChange=len(UangKembalian)
@@ -175,10 +254,13 @@ class WelcomeBack(Screen):
                         xparamUangKembalian2=1
         #xparamUangKembaliancond3= UangKembalian.startswith('[0][0-9]')
         if uname== '' or passw=='' or UangKembalian=='' :
-            info.text='[color=#FF0000]Username ,Password,and Change  required[/color]'
+            #info.text='[color=#FF0000]Username ,Password,and Change  required[/color]'
+            self.Required()
         elif xparamUangKembalian or xparamUangKembalian2==0 :
-            info.text='[color=#FF0000]Masukkan jumlah uang dengan format yang benar[/color]'
+            #info.text='[color=#FF0000]Masukkan jumlah uang dengan format yang benar[/color]'
             self.ids.money_field.text=''
+            self.ids.pwd_field.text=''
+            self.InvalidChange()
         else:
             for i,c in enumerate(self.username):
                 if c == uname:
@@ -192,9 +274,10 @@ class WelcomeBack(Screen):
                     self.ids.money_field.text=''
                     self.ids.info.text=''
                     NamaUser=self.namauser[UserData]
+                    self.rupiah_format()
                     self.manager.get_screen('Home_Win').labelText = NamaUser
                     self.manager.get_screen('Home_Win').dataWaktu = simpanwaktu
-                    self.manager.get_screen('Home_Win').uang = UangKembalianUntukHome
+                    self.manager.get_screen('Home_Win').uang = 'Rp '+IntegerToRupiah
                     #untuk mengganti gambar profil cewek atau cowok
                     if self.gender[UserData]=='Male':
                         self.manager.get_screen('Home_Win').img_src = 'man_home.png'
@@ -203,15 +286,17 @@ class WelcomeBack(Screen):
                     reset=' '
                 
                 else:
-                    info.text='[color=#FF0000]Invalid Username or Password!!![/color]'
+                    #info.text='[color=#FF0000]Invalid Username or Password!!![/color]'
                     self.ids.pwd_field.text=''
                     self.ids.money_field.text=''
+                    self.Invalid()
 
             else:
-                info.text='[color=#FF0000]Username and Password not registered[/color]'
+                #info.text='[color=#FF0000]Username and Password not registered[/color]'
                 self.ids.username_field.text=''
                 self.ids.pwd_field.text=''
                 self.ids.money_field.text=''
+                self.notRegister()
         self.username=[]
         self.password=[]
         self.namauser=[]
@@ -252,14 +337,18 @@ class InvalidChange(Popup):
         resetText=1
         self.dismiss()
         print('keluar')
+class InvalidDigit(Popup):
+    def FadePopup(self):
+        #self.manager.current='login'#program untuk pindah ke layout yang lain berdasarkan name window
+        self.dismiss()
+        print('gajadiKeluar')
+    def FadePopupYes(self):
+        global resetText
+        resetText=1
+        self.dismiss()
+        print('keluar')
 class HackedDemoNavDrawer(MDNavigationDrawer):
     # DO NOT USE
-    def Transaksi_Gagal(self,*args):
-        TransaksiGagal().open()
-    def Transaksi_Berhasil(self,*args):
-        TransaksiGagal().open()
-    def Logout_Window(self,*args):
-        LogoutWindow().open()
     def add_widget(self, widget, index=0):
         if issubclass(widget.__class__, BaseListItem):
             self._list.add_widget(widget, index)
@@ -287,14 +376,15 @@ class HomeWindow(Screen):
         self.codeItem=[]
         self.NamaProduct=[]
         self.HargaBarang=[]
+    def openfile(self):
+        global datafile
+        subprocess.call(['C:\\Program Files\\Microsoft Office\\Office15\\EXCEL.exe',datafile])
     def Transaksi_Berhasil(self,*args):
         TransaksiBerhasil().open()
-    def Transaksi_Gagal(self,*args):
-        TransaksiGagal().open()
-    def Logout_Window(self,*args):
-        LoginWindow().open()
     def SoldOut(self,*args):
         SoldOutWindow().open()
+    def Transaksi_Gagal(self):
+        TransaksiGagal().open()
     def __init__(self, **kwargs):
         global d1
         super().__init__(**kwargs)
@@ -546,7 +636,6 @@ class HomeWindow(Screen):
                 hargaBarangTotal+=self.checkhargabarang[ParamProduct]
                 totalBarang+=1
                 ParamBarangArray+=1
-
         else :
             print('data tdk masuk')
         self.ids.total_barang.text=str(totalBarang)
@@ -558,6 +647,28 @@ class HomeWindow(Screen):
         self.checkhargabarang=[]
         #nilai scancode di nolkan kembali agar tidak mempegaruhi button sebelah scan
         scandata=0
+    def rupiah_formatkembalian(self):
+        global kembalian
+        global IntegerToRupiah
+        locale.setlocale(locale.LC_NUMERIC, 'IND')
+        IntegerToRupiah = locale.format("%.*f", (2, int(kembalian)), True)
+        print(IntegerToRupiah)
+    def tampilanchange(self):
+        global kembalian
+        global Cash 
+        Cash=self.ids.pembayaran.text
+        if Cash=='' or Cash=='0.0':
+            Cash=0
+            self.Transaksi_Gagal()
+        if int(Cash) < hargaBarangTotal:
+            print('Uang Pembayaran kurang')
+            self.Transaksi_Gagal()
+            self.ids.pembayaran.text=''
+            self.ids.Kembalian.text=''
+        else:
+            kembalian=int(Cash)-hargaBarangTotal
+            self.rupiah_formatkembalian()
+            self.ids.Kembalian.text='Rp '+str(IntegerToRupiah)
     def pembayaran(self):
         global hargaBarangTotal
         global JdataPenjualan
@@ -566,81 +677,92 @@ class HomeWindow(Screen):
         global simpanwaktu
         global totalBarang
         global kondisiPembayaran
+        global datafile
+        global kembalian
+        global Cash
+        global NamaUser
+        global jam
         os.system("taskkill /im EXCEL.EXE /f")#Untuk Meng - Close Program Excel yang running
-        Cash=self.ids.pembayaran.text
-        if Cash=='' or Cash=='0.0':
-            Cash=0
-        if int(Cash) < hargaBarangTotal:
-            print('Uang Pembayaran kurang')
-            self.ids.pembayaran.text=''
-            self.ids.Kembalian.text=''
-        else:
-            Kembalian=int(Cash)-hargaBarangTotal
-            self.ids.Kembalian.text=str(Kembalian)
-            datafile='Penjualan_'+str(simpanwaktu)+'.xls'
-            if os.path.isfile(datafile):
-                rb = xlrd.open_workbook(datafile)
-                wb = copy(rb)
-                sheet = rb.sheet_by_index(0)
-                for row in range(1,sheet.nrows):
-                    JdataPenjualan+=1
-                w_sheet = wb.get_sheet(0)
-                rowBarang=JdataPenjualan+1
-                w_sheet.write(rowBarang,0,'kode produk')
-                w_sheet.write(rowBarang,1,'nama produk')
-                w_sheet.write(rowBarang,2,'harga produk')
-                w_sheet.write(rowBarang,3,'Jumlah Produk')
-                w_sheet.write(rowBarang,4,'Subtotal')
-                rowBarang+=1
-                for i in range(0,ParamBarangArray):  
-                    w_sheet.write(rowBarang,0,self.codeItem[i])
-                    w_sheet.write(rowBarang,1,self.NamaProduct[i])
-                    w_sheet.write(rowBarang,2,self.hargaperBarang[i])
-                    w_sheet.write(rowBarang,3,self.JumlahProduct[i])
-                    w_sheet.write(rowBarang,4,self.HargaBarang[i])
-                    rowBarang+=1
-                w_sheet.write(rowBarang+1,4,hargaBarangTotal)
-                w_sheet.write(rowBarang+1,0,'Harga Total')
-                w_sheet.write(rowBarang+2,4,Cash)
-                w_sheet.write(rowBarang+2,0,'Pembayaran')
-                w_sheet.write(rowBarang+3,4,Kembalian)
-                w_sheet.write(rowBarang+3,0,'Uang Kembalian')
-                kondisiPembayaran=1
-                wb.save(datafile)
+        kembalianku=self.ids.Kembalian.text
+        if kondisiPembayaran == 1:
+            self.reset()
+        else: 
+            if  kembalianku=='' or kembalianku==' ' or kembalianku==0:
+                print('lengkapi data traansaksi')
+                self.Transaksi_Gagal()
             else:
-                wb = xlwt.Workbook()
-                w_sheet = wb.add_sheet('Sheet 1')
-                w_sheet.write(0,0,'kode produk')
-                w_sheet.write(0,1,'nama produk')
-                w_sheet.write(0,2,'harga produk')
-                w_sheet.write(0,3,'Jumlah Produk')
-                w_sheet.write(0,4,'Subtotal')
-                rowBarang=1
-                for i in range(0,ParamBarangArray):  
-                    w_sheet.write(rowBarang,0,self.codeItem[i])
-                    w_sheet.write(rowBarang,1,self.NamaProduct[i])
-                    w_sheet.write(rowBarang,2,self.hargaperBarang[i])
-                    w_sheet.write(rowBarang,3,self.JumlahProduct[i])
-                    w_sheet.write(rowBarang,4,self.HargaBarang[i])
+                if os.path.isfile(datafile):
+                    rb = xlrd.open_workbook(datafile)
+                    wb = copy(rb)
+                    sheet = rb.sheet_by_index(0)
+                    for row in range(1,sheet.nrows):
+                        JdataPenjualan+=1
+                    w_sheet = wb.get_sheet(0)
+                    rowBarang=JdataPenjualan+1
+                    w_sheet.write(rowBarang,0,'Nama Kasir')
+                    w_sheet.write(rowBarang+1,0,NamaUser)
+                    w_sheet.write(rowBarang,1,'Waktu Transaksi')
+                    w_sheet.write(rowBarang+1,1,jam)
+                    w_sheet.write(rowBarang,2,'kode produk')
+                    w_sheet.write(rowBarang,3,'nama produk')
+                    w_sheet.write(rowBarang,4,'harga produk')
+                    w_sheet.write(rowBarang,5,'Jumlah Produk')
+                    w_sheet.write(rowBarang,6,'Subtotal')
+                    w_sheet.write(rowBarang+1,7,hargaBarangTotal)
+                    w_sheet.write(rowBarang,7,'Harga Total')
+                    w_sheet.write(rowBarang+1,8,Cash)
+                    w_sheet.write(rowBarang,8,'Pembayaran')
+                    w_sheet.write(rowBarang+1,9,kembalian)
+                    w_sheet.write(rowBarang,9,'Uang Kembalian')
                     rowBarang+=1
-                w_sheet.write(rowBarang+1,4,hargaBarangTotal)
-                w_sheet.write(rowBarang+1,0,'Harga Total')
-                w_sheet.write(rowBarang+2,4,Cash)
-                w_sheet.write(rowBarang+2,0,'Pembayaran')
-                w_sheet.write(rowBarang+3,4,Kembalian)
-                w_sheet.write(rowBarang+3,0,'Uang Kembalian')
-                kondisiPembayaran=1
-                wb.save(datafile)
-            self.codeItem=[]
-            self.NamaProduct=[]
-            self.hargaperBarang=[]
-            self.JumlahProduct=[]
-            self.HargaBarang=[]
-            #self.ids.list_item.text=''
-            hargaBarangTotal=0
-            JdataPenjualan=1
-            totalBarang=0
-            ParamBarangArray=0
+                    for i in range(0,ParamBarangArray):  
+                        w_sheet.write(rowBarang,2,self.codeItem[i])
+                        w_sheet.write(rowBarang,3,self.NamaProduct[i])
+                        w_sheet.write(rowBarang,4,self.hargaperBarang[i])
+                        w_sheet.write(rowBarang,5,self.JumlahProduct[i])
+                        w_sheet.write(rowBarang,6,self.HargaBarang[i])
+                        rowBarang+=1
+                    kondisiPembayaran=1
+                    wb.save(datafile)
+                    self.Transaksi_Berhasil()
+                else:
+                    wb = xlwt.Workbook()
+                    w_sheet = wb.add_sheet('Sheet 1')
+                    w_sheet.write(0,0,'Nama Kasir')
+                    w_sheet.write(1,0,NamaUser)
+                    w_sheet.write(0,1,'Waktu Transaksi')
+                    w_sheet.write(1,1,jam)
+                    w_sheet.write(0,2,'kode produk')
+                    w_sheet.write(0,3,'nama produk')
+                    w_sheet.write(0,4,'harga produk')
+                    w_sheet.write(0,5,'Jumlah Produk')
+                    w_sheet.write(0,6,'Subtotal')
+                    rowBarang=1
+                    w_sheet.write(1,7,hargaBarangTotal)
+                    w_sheet.write(0,7,'Harga Total')
+                    w_sheet.write(1,8,Cash)
+                    w_sheet.write(0,8,'Pembayaran')
+                    w_sheet.write(1,9,kembalian)
+                    w_sheet.write(0,9,'Uang Kembalian')
+                    for i in range(0,ParamBarangArray):  
+                        w_sheet.write(rowBarang,2,self.codeItem[i])
+                        w_sheet.write(rowBarang,3,self.NamaProduct[i])
+                        w_sheet.write(rowBarang,4,self.hargaperBarang[i])
+                        w_sheet.write(rowBarang,5,self.JumlahProduct[i])
+                        w_sheet.write(rowBarang,6,self.HargaBarang[i])
+                        rowBarang+=1
+                    kondisiPembayaran=1
+                    self.Transaksi_Berhasil()
+                    wb.save(datafile)
+                self.codeItem=[]
+                self.NamaProduct=[]
+                self.hargaperBarang=[]
+                self.JumlahProduct=[]
+                self.HargaBarang=[]
+                hargaBarangTotal=0
+                JdataPenjualan=1
+                totalBarang=0
+                ParamBarangArray=0
 
 class LoginWindow(Screen):
     def __init__(self, **kwargs):
@@ -651,7 +773,7 @@ class LoginWindow(Screen):
         self.gender=[]
     def notRegister(self,*args):
         NotRegistered().open()
-    def Required(self,*args):
+    def Required(self):
         Required().open()
     def Invalid(self,*args):
         Invalid().open()
@@ -720,10 +842,13 @@ class LoginWindow(Screen):
                         xparamUangKembalian2=1
         #xparamUangKembaliancond3= UangKembalian.startswith('[0][0-9]')
         if uname== '' or passw=='' or UangKembalian=='' :
-            info.text='[color=#FF0000]Username ,Password,and Change  required[/color]'
+            #info.text='[color=#FF0000]Username ,Password,and Change  required[/color]'
+            self.Required()
         elif xparamUangKembalian or xparamUangKembalian2==0 :
-            info.text='[color=#FF0000]Masukkan jumlah uang dengan format yang benar[/color]'
+            #info.text='[color=#FF0000]Masukkan jumlah uang dengan format yang benar[/color]'
             self.ids.money_field.text=''
+            self.ids.pwd_field.text=''
+            self.InvalidChange()
         else:
             for i,c in enumerate(self.username):
                 if c == uname:
@@ -749,15 +874,17 @@ class LoginWindow(Screen):
                     reset=' '
                 
                 else:
-                    info.text='[color=#FF0000]Invalid Username or Password!!![/color]'
+                    #info.text='[color=#FF0000]Invalid Username or Password!!![/color]'
                     self.ids.pwd_field.text=''
                     self.ids.money_field.text=''
+                    self.Invalid()
 
             else:
-                info.text='[color=#FF0000]Username and Password not registered[/color]'
+                #info.text='[color=#FF0000]Username and Password not registered[/color]'
                 self.ids.username_field.text=''
                 self.ids.pwd_field.text=''
                 self.ids.money_field.text=''
+                self.notRegister()
         self.username=[]
         self.password=[]
         self.namauser=[]
@@ -768,18 +895,11 @@ class LoginWindow(Screen):
 #Register
    
 class RegistWindow(Screen):
+    #popup = ObjectProperty()
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super(RegistWindow,self).__init__(**kwargs)
         self.username=[]
         self.nomorHand=[]
-    def notRegister(self,*args):
-        NotRegistered().open()
-    def Required(self,*args):
-        Required().open()
-    def Invalid(self,*args):
-        Invalid().open()
-    def InvalidChange(self,*args):
-        InvalidChange().open()
     def reset(self):
         self.usernameku.text=''
         self.namaAwal.text=''
@@ -789,6 +909,24 @@ class RegistWindow(Screen):
         self.address.text=''
         self.confpasswr.text=''
         self.ids.info_regist.text=''
+    def InvalidDigit(self,*args):
+        InvalidDigit().open()
+    def UsernameAlready(self,*args):
+        UsernameAlready().open()
+    def DataNotComplete(self,*args):
+        DataNotComplete().open()
+    def InvalidName(self,*args):
+        InvalidName().open()
+    def InvalidNumbers(self,*args):
+        InvalidNumbers().open()
+    def InvalidPhoneNumber(self,*args):
+        InvalidPhoneNumber().open()
+    def UsernameAlready(self,*args):
+        UsernameAlready().open()
+    def PhoneNumberAlready(self,*args):
+        PhoneNumberAlready().open()
+    def InvalidPassword(self,*args):
+        InvalidPassword().open()
     def regist(self):
         global rows
         global cols
@@ -846,22 +984,29 @@ class RegistWindow(Screen):
         print(xparamPhoneFront)
         if emaildata=='' or dataFirstName=='' or dataLastName=='' or gender=='' or nomorHP=='' or passw=='' or confPass=='':
             print('Harap Lengkapi Data Diri Anda')
-            info.text='[color=#FF0000]Harap Lengkapi Data Diri Anda[/color]'
+            #info.text='[color=#FF0000]Harap Lengkapi Data Diri Anda[/color]'
+            self.DataNotComplete()
         elif xparamname:
-            info.text='[color=#FF0000]tulis nama dengan format yang benar[/color]'
+            #info.text='[color=#FF0000]tulis nama dengan format yang benar[/color]'
+            self.InvalidName()
         elif lengthNumberP<10 or lengthNumberP>12:
-            info.text='[color=#FF0000]jumlah digit nomor telepon anda tidak sesuai [/color]'
+            #info.text='[color=#FF0000]jumlah digit nomor telepon anda tidak sesuai [/color]'
+            self.InvalidDigit()
         elif xparamPhoneNumber:
-            info.text='[color=#FF0000]Masukkan Nomor Telepon berupa angka saja[/color]'
+            #info.text='[color=#FF0000]Masukkan Nomor Telepon berupa angka saja[/color]'
+            self.InvalidNumbers()
         elif xparamPhoneFront == 1 :
-            info.text='[color=#FF0000]invalid Phone Number[/color]'
+            info.text='[color=#FF0000]invalid Phone Number[/color]'#jika awalan dari nomer bukan 0
+            self.InvalidPhoneNumber()
         #elif xparamPasswNumber == None or xparamPasswType == None:
             #print('Password harus terdiri dari huruf dan angka')
         elif UserData >= 0:
             if emaildata==self.username[UserData]:
-                info.text='[color=#FF0000]Username Telah Digunakan[/color]'
+                #info.text='[color=#FF0000]Username Telah Digunakan[/color]'
+                self.UsernameAlready()
             elif nomorHP==self.nomorHand[UserData]:
                 info.text='[color=#FF0000]Nomor Handphone ini telah terdaftar[/color]'
+                self.PhoneNumberAlready()
         elif confPass!= passw:
             print('ulangi password yang anda masukkan')
             info.text='[color=#FF0000]Ulangi Password Yang Anda Masukkan[/color]'
@@ -870,7 +1015,8 @@ class RegistWindow(Screen):
         elif xparamPasswNumber and xparamPasswType and xparamPhoneFront==0:
             if LengthPass<8:
                 print('Minimal terdapat 8 karakter')
-                info.text='[color=#FF0000]password minimal terdapat 8 karakter[/color]'
+                #info.text='[color=#FF0000]password minimal terdapat 8 karakter[/color]'
+                self.InvalidPassword
                 self.passwrd.text=''
                 self.confpasswr.text=''
             else:
@@ -920,16 +1066,11 @@ class RegistWindow(Screen):
             gender=''  
     
 
-class POSBERRYApp(App):
+class ForcaPOSApp(App):
     theme_cls = ThemeManager()
     def Transaksi_Berhasil(self,*args):
         TransaksiBerhasil().open()
-    def Transaksi_Gagal(self,*args):
-        TransaksiGagal().open()
-    def Logout_Window(self,*args):
-        LoginWindow().open()
     def build(self):
-
         main_widget = Builder.load_file(
             os.path.join(os.path.dirname(__file__), "./posberry.kv")
         )
@@ -946,4 +1087,4 @@ class POSBERRYApp(App):
 
  
 if __name__ == "__main__":
-    POSBERRYApp().run()
+    ForcaPOSApp().run()
