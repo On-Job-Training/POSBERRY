@@ -528,6 +528,7 @@ ScreenManager:
                     on_press: root.regist()   
                     pos: 680,70
                     size: 79, 28
+                    #on_release:root.manager.popup.open() #Same thing for the second screen
                     bold:True
                     background_color:0,0,0,0
                     background_normal:'' 
@@ -602,6 +603,7 @@ ScreenManager:
         FlatButton:                 
             FlatButton:
                 text: 'Welcome Back'
+                font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
                 bold: True
                 color: utils.get_color_from_hex('#000000')        
                 font_size: 40 
@@ -609,6 +611,7 @@ ScreenManager:
                 pos: 530,485
             FlatButton:
                 text: 'Sign in to continue'
+                font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
                 bold: True
                 color: utils.get_color_from_hex('#0096FB')        
                 font_size: 17
@@ -954,6 +957,7 @@ ScreenManager:
                                     text:'Report Penjualan'
                                     color:utils.get_color_from_hex('#000000')
                                     align:'left'
+                                    on_press: root.openfile()
                                     background_color:utils.get_color_from_hex('#ffffff')
                                     background_normal:''
                             
@@ -1191,6 +1195,7 @@ ScreenManager:
                                 font_size: 14
                                 id: pembayaran
                                 text_size: self.size
+                                on_text_validate:root.tampilanchange()
                                 halign:'right'
                                 multiline:False
                                 background_color: 0,0,0,0  
@@ -1211,6 +1216,7 @@ ScreenManager:
                                 id:Kembalian
                                 hint_text: "0.0"
                                 font_size: 14
+                                readonly: True
                                 text_size: self.size
                                 halign:'right'
                                 background_color: 0,0,0,0  
@@ -2722,9 +2728,11 @@ ScreenManager:
                 spacing:0
                 FlatButton:
                     text:'Username and password'
+                    font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
                     color: utils.get_color_from_hex('#F11B29')
                 FlatButton:
                     text:'not registered'
+                    font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
                     color: utils.get_color_from_hex('#F11B29')
             BoxLayout:
                 size_hint_y:.2
@@ -2737,6 +2745,7 @@ ScreenManager:
                     size_hint_x:.1
                     text:'OK'
                     bold:True
+                    on_press: root.FadePopup()
                     font_size:15
                     color: utils.get_color_from_hex('#ffffff')
                     background_normal:''
@@ -2749,6 +2758,7 @@ ScreenManager:
 #POP UP  Ketika ada form yang kosong
 <Required>: 
     title:'Error'
+    font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
     size_hint:.4,.4
     auto_dismiss: False
     BoxLayout:  
@@ -2783,9 +2793,11 @@ ScreenManager:
                 spacing:0
                 FlatButton:
                     text:'Username, Password'
+                    font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
                     color: utils.get_color_from_hex('#F11B29')
                 FlatButton:
                     text:'and Change required'
+                    font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
                     color: utils.get_color_from_hex('#F11B29')
             BoxLayout:
                 size_hint_y:.2
@@ -2799,6 +2811,8 @@ ScreenManager:
                     text:'OK'
                     bold:True
                     font_size:15
+                    font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
+                    on_press: root.FadePopup()
                     color: utils.get_color_from_hex('#ffffff')
                     background_normal:''
                     background_color:utils.get_color_from_hex('#31C2F8')
@@ -2808,8 +2822,10 @@ ScreenManager:
                 size_hint_y:.2
 
 #POP UP Ketika invalid username dan password
+
 <Invalid>: 
     title:'Error'
+    font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
     size_hint:.4,.4
     auto_dismiss: False
     BoxLayout:  
@@ -2844,9 +2860,11 @@ ScreenManager:
                 spacing:0
                 FlatButton:
                     text:'Invalid username or'
+                    font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
                     color: utils.get_color_from_hex('#F11B29')
                 FlatButton:
                     text:'password'
+                    font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
                     color: utils.get_color_from_hex('#F11B29')
             BoxLayout:
                 size_hint_y:.2
@@ -2858,7 +2876,9 @@ ScreenManager:
                 Button:
                     size_hint_x:.1
                     text:'OK'
+                    font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
                     bold:True
+                    on_press: root.FadePopup()
                     font_size:15
                     color: utils.get_color_from_hex('#ffffff')
                     background_normal:''
@@ -2870,65 +2890,6 @@ ScreenManager:
 
 #POP UP Ketika transaksi berhasil
 <TransaksiBerhasil>: 
-    title:'Success'
-    size_hint:.4,.4
-    auto_dismiss: False
-    BoxLayout:  
-        canvas.before:
-            Color:
-                rgba: utils.get_color_from_hex('#ffffff')  
-            RoundedRectangle:
-                size: self.size
-                pos: self.pos
-                radius:5,5,5,5
-        orientation:'vertical'
-        spacing:5
-        BoxLayout:
-            orientation:"vertical"
-            BoxLayout:
-                size_hint_y:.1
-            BoxLayout:
-                size_hint_y:.8
-                Image:
-                    valign:'top'
-                    source: 'ikon/berhasil.png'
-                    center_x: self.parent.center_x
-                    center_y: self.parent.center_y
-                    #size:100,100
-                    keep_ratio: True
-                    allow_stretch: True
-            BoxLayout:
-                size_hint_y:.1       
-            BoxLayout:
-                size_hint_y:.3
-                orientation:'vertical'
-                spacing:0
-                FlatButton:
-                    text:'Transaksi Gagal !'
-                    color: utils.get_color_from_hex('#F80606')
-                
-            BoxLayout:
-                size_hint_y:.2
-           
-            BoxLayout:
-                size_hint_y:.3
-                BoxLayout:
-                    size_hint_x:.2
-                Button:
-                    size_hint_x:.1
-                    text:'OK'
-                    bold:True
-                    font_size:15
-                    color: utils.get_color_from_hex('#ffffff')
-                    background_normal:''
-                    background_color:utils.get_color_from_hex('#31C2F8')
-                BoxLayout:
-                    size_hint_x:.2
-            BoxLayout:
-                size_hint_y:.2
-
-#POP UP Ketika transaksi gagal
-<TransaksiGagal>: 
     title:'Error'
     size_hint:.4,.4
     auto_dismiss: False
@@ -2947,24 +2908,25 @@ ScreenManager:
             BoxLayout:
                 size_hint_y:.1
             BoxLayout:
-                size_hint_y:.8
+                size_hint_y:.2
                 Image:
                     valign:'top'
-                    source: 'ikon/transaksi_gagal.png'
+                    source: 'ikon/berhasil.png'
                     center_x: self.parent.center_x
                     center_y: self.parent.center_y
-                    #size:100,100
+                    size:100,100
                     keep_ratio: True
                     allow_stretch: True
             BoxLayout:
                 size_hint_y:.1       
             BoxLayout:
-                size_hint_y:.3
+                size_hint_y:.4
                 orientation:'vertical'
                 spacing:0
                 FlatButton:
-                    text:'Transaksi Gagal !'
-                    color: utils.get_color_from_hex('#F80606')
+                    text:'Transaksi Berhasil !'
+                    font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
+                    color: utils.get_color_from_hex('#F11B29')
                 
             BoxLayout:
                 size_hint_y:.2
@@ -2978,6 +2940,7 @@ ScreenManager:
                     text:'OK'
                     bold:True
                     font_size:15
+                    on_press: root.FadePopup()
                     color: utils.get_color_from_hex('#ffffff')
                     background_normal:''
                     background_color:utils.get_color_from_hex('#31C2F8')
@@ -2986,8 +2949,7 @@ ScreenManager:
             BoxLayout:
                 size_hint_y:.2
 
-
-#POPup Barang soldout
+#POPup logout
 <SoldOutWindow>: 
     title:'Logout'
     size_hint:.5,.5
@@ -3051,16 +3013,80 @@ ScreenManager:
                     background_normal:'' 
                     text:'YES'
                     pos:self.pos
+                    on_press: app.root.current = "login"
+                    on_release: nav_layout.toggle_state()#untuk mengembalikan posisi navbar ke posisi awal 
+                    on_press: root.reset()
                     color:utils.get_color_from_hex('#ffffff') 
             BoxLayout:
                 size_hint_x:.1
         BoxLayout:
 
             size_hint_y:.3
+#POP UP Ketika transaksi gagal
+<TransaksiGagal>: 
+    title:'Error'
+    size_hint:.4,.4
+    auto_dismiss: False
+    BoxLayout:  
+        canvas.before:
+            Color:
+                rgba: utils.get_color_from_hex('#ffffff')  
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius:5,5,5,5
+        orientation:'vertical'
+        spacing:5
+        BoxLayout:
+            orientation:"vertical"
+            BoxLayout:
+                size_hint_y:.1
+            BoxLayout:
+                size_hint_y:.8
+                Image:
+                    valign:'top'
+                    source: 'ikon/transaksi_gagal.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    #size:100,100
+                    keep_ratio: True
+                    allow_stretch: True
+            BoxLayout:
+                size_hint_y:.1       
+            BoxLayout:
+                size_hint_y:.3
+                orientation:'vertical'
+                spacing:0
+                FlatButton:
+                    text:'Transaksi Gagal !'
+                    font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
+                    color: utils.get_color_from_hex('#F80606')
+                
+            BoxLayout:
+                size_hint_y:.2
+           
+            BoxLayout:
+                size_hint_y:.3
+                BoxLayout:
+                    size_hint_x:.2
+                Button:
+                    size_hint_x:.1
+                    text:'OK'
+                    bold:True
+                    on_press: root.FadePopup()
+                    font_size:15
+                    color: utils.get_color_from_hex('#ffffff')
+                    background_normal:''
+                    background_color:utils.get_color_from_hex('#31C2F8')
+                BoxLayout:
+                    size_hint_x:.2
+            BoxLayout:
+                size_hint_y:.2
 
 #POP UP ketika invalid Change
 <InvalidChange>: 
     title:'Error'
+    font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
     size_hint:.4,.4
     auto_dismiss: False
     BoxLayout:  
@@ -3095,6 +3121,7 @@ ScreenManager:
                 spacing:0
                 FlatButton:
                     text:'Invalid change'
+                    font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
                     color: utils.get_color_from_hex('#F11B29')
 
             BoxLayout:
@@ -3108,6 +3135,7 @@ ScreenManager:
                     size_hint_x:.1
                     text:'OK'
                     bold:True
+                    on_press:root.FadePopup()
                     font_size:15
                     color: utils.get_color_from_hex('#ffffff')
                     background_normal:''
@@ -3116,78 +3144,6 @@ ScreenManager:
                     size_hint_x:.2
             BoxLayout:
                 size_hint_y:.2
-
-#POP UP Untuk konfirmasi ketika LOGOUT
-<LogoutWindow>: 
-    title:'Logout'
-    size_hint:.5,.5
-    auto_dismiss: False
-    BoxLayout:  
-        canvas.before:
-            Color:
-                rgba: utils.get_color_from_hex('#ffffff')  
-            RoundedRectangle:
-                size: self.size
-                pos: self.pos
-                radius:5,5,5,5
-        orientation:'vertical'
-        spacing:5
-        BoxLayout:
-            
-            Label:
-                font_size:20
-                align:'center'
-                text:'Are you sure ?'
-                color: utils.get_color_from_hex('#000000') 
-        BoxLayout: 
-            orientation:'horizontal'
-            size_hint_y:.2  
-            spacing:30
-            BoxLayout:
-                size_hint_x:.7
-            BoxLayout:   
-                size_hint_x:.2
-                padding:10
-                canvas:
-                    Color:
-                        rgba: utils.get_color_from_hex('#F60A0A') 
-                    RoundedRectangle:
-                        pos: self.pos
-                        size:self.size
-                        radius: [15, 15, 15, 15]
-                Button:   
-                    bold:True
-                    font_size:13
-                    background_color:0,0,0,0
-                    background_normal:'' 
-                    text:'NO'
-                    pos:self.pos
-                    color:utils.get_color_from_hex('#ffffff')
-                    on_release : app.root.current = "register"
-            BoxLayout:   
-                size_hint_x:.2
-                padding:10
-                canvas:
-                    Color:
-                        rgba: utils.get_color_from_hex('#0096FB') 
-                    RoundedRectangle:
-                        pos: self.pos
-                        size:self.size
-                        radius: [15, 15, 15, 15]
-                Button:   
-                    bold:True
-                    font_size:13
-                    background_color:0,0,0,0
-                    background_normal:'' 
-                    text:'YES'
-                    pos:self.pos
-                    color:utils.get_color_from_hex('#ffffff') 
-            BoxLayout:
-                size_hint_x:.1
-        BoxLayout:
-
-            size_hint_y:.3
-
 #POP UP Ketika data diri pada Register tidak lengkap
 <DataNotComplete>: 
     title:'Error'
@@ -3239,6 +3195,7 @@ ScreenManager:
                 Button:
                     size_hint_x:.1
                     text:'OK'
+                    on_press:root.FadePopup()
                     bold:True
                     font_size:15
                     color: utils.get_color_from_hex('#ffffff')
@@ -3301,6 +3258,7 @@ ScreenManager:
                     size_hint_x:.1
                     text:'OK'
                     bold:True
+                    on_press:root.FadePopup()
                     font_size:15
                     color: utils.get_color_from_hex('#ffffff')
                     background_normal:''
@@ -3422,6 +3380,7 @@ ScreenManager:
                     size_hint_x:.1
                     text:'OK'
                     bold:True
+                    on_press:root.FadePopup()
                     font_size:15
                     color: utils.get_color_from_hex('#ffffff')
                     background_normal:''
@@ -3481,6 +3440,7 @@ ScreenManager:
                     size_hint_x:.1
                     text:'OK'
                     bold:True
+                    on_press:root.FadePopup()
                     font_size:15
                     color: utils.get_color_from_hex('#ffffff')
                     background_normal:''
@@ -3540,6 +3500,7 @@ ScreenManager:
                     size_hint_x:.1
                     text:'OK'
                     bold:True
+                    on_press:root.FadePopup()
                     font_size:15
                     color: utils.get_color_from_hex('#ffffff')
                     background_normal:''
@@ -3599,6 +3560,7 @@ ScreenManager:
                     size_hint_x:.1
                     text:'OK'
                     bold:True
+                    on_press:root.PhoneNumberAlready
                     font_size:15
                     color: utils.get_color_from_hex('#ffffff')
                     background_normal:''
@@ -3659,76 +3621,7 @@ ScreenManager:
                 Button:
                     size_hint_x:.1
                     text:'OK'
-                    bold:True
-                    font_size:15
-                    color: utils.get_color_from_hex('#ffffff')
-                    background_normal:''
-                    background_color:utils.get_color_from_hex('#31C2F8')
-                BoxLayout:
-                    size_hint_x:.2
-            BoxLayout:
-                size_hint_y:.2
-
-#POP UP untuk Notifikasi (REGISTER WINDOW)
-<NotificationWindow>: 
-    title:'Error'
-    size_hint:.4,.4
-    auto_dismiss: False
-    BoxLayout:  
-        canvas.before:
-            Color:
-                rgba: utils.get_color_from_hex('#ffffff')  
-            RoundedRectangle:
-                size: self.size
-                pos: self.pos
-                radius:5,5,5,5
-        orientation:'vertical'
-        spacing:5
-        BoxLayout:
-            orientation:"vertical"
-            BoxLayout:
-                size_hint_y:.1
-            BoxLayout:
-                size_hint_y:.2
-                Image:
-                    valign:'top'
-                    source: 'ikon/error.png'
-                    center_x: self.parent.center_x
-                    center_y: self.parent.center_y
-                    size:100,100
-                    keep_ratio: True
-                    allow_stretch: True
-            BoxLayout:
-                size_hint_y:.1       
-            BoxLayout:
-                size_hint_y:.4
-                #orientation:'vertical'
-                #spacing:0
-                #FlatButton:
-                    #text:'Password must be at least'
-                    #color: utils.get_color_from_hex('#F11B29')
-                #FlatButton:
-                    #text:'8 characters long !'
-                    #color: utils.get_color_from_hex('#F11B29')
-                Label:
-                    id:info_regist_new
-                    text:''
-                    markup: True
-                    size_hint_y: None
-                    bold:True
-                    text:''
-                    #color: utils.get_color_from_hex('#ff0505')   
-                    font_size:15
-            BoxLayout:
-                size_hint_y:.2
-           
-            BoxLayout:
-                size_hint_y:.3
-                BoxLayout:
-                    size_hint_x:.2
-                Button:
-                    size_hint_x:.1
-                    text:'OK'
+                    on_press: 
                     bold:True
                     font_size:15
                     color: utils.get_color_from_hex('#ffffff')
