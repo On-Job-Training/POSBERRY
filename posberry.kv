@@ -3632,3 +3632,65 @@ ScreenManager:
                     size_hint_x:.2
             BoxLayout:
                 size_hint_y:.2
+
+#POP UP Ketika Password harus terdiri dari angka dan nomor (REGISTER WINDOW)
+<PasswordLettersNumber>: 
+    title:'Error'
+    size_hint:.4,.4
+    auto_dismiss: False
+    BoxLayout:  
+        canvas.before:
+            Color:
+                rgba: utils.get_color_from_hex('#ffffff')  
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius:5,5,5,5
+        orientation:'vertical'
+        spacing:5
+        BoxLayout:
+            orientation:"vertical"
+            BoxLayout:
+                size_hint_y:.1
+            BoxLayout:
+                size_hint_y:.2
+                Image:
+                    valign:'top'
+                    source: 'ikon/error.png'
+                    center_x: self.parent.center_x
+                    center_y: self.parent.center_y
+                    size:100,100
+                    keep_ratio: True
+                    allow_stretch: True
+            BoxLayout:
+                size_hint_y:.1       
+            BoxLayout:
+                size_hint_y:.4
+                orientation:'vertical'
+                spacing:0
+                FlatButton:
+                    text:'The Password must consist'
+                    color: utils.get_color_from_hex('#F11B29')
+                FlatButton:
+                    text:'of letters and numbers !'
+                    color: utils.get_color_from_hex('#F11B29')
+            BoxLayout:
+                size_hint_y:.2
+           
+            BoxLayout:
+                size_hint_y:.3
+                BoxLayout:
+                    size_hint_x:.2
+                Button:
+                    size_hint_x:.1
+                    text:'OK'
+                    on_press: 
+                    bold:True
+                    font_size:15
+                    color: utils.get_color_from_hex('#ffffff')
+                    background_normal:''
+                    background_color:utils.get_color_from_hex('#31C2F8')
+                BoxLayout:
+                    size_hint_x:.2
+            BoxLayout:
+                size_hint_y:.2
