@@ -41,6 +41,7 @@ Cash=''
 gender=''
 resetText=0
 JumlahUser=1
+jumlahTransaksi=0
 IntegerToRupiah=0
 rowBarang=1
 JdataPenjualan=1
@@ -367,6 +368,7 @@ class HomeWindow(Screen):
     labelText = StringProperty('')
     dataWaktu=StringProperty('')
     uang=StringProperty('')
+    jumlahTrans=StringProperty('')
     #datanama = StringProperty(0)
     def setName(self,*args):
         setNamePopup().open()
@@ -682,6 +684,7 @@ class HomeWindow(Screen):
         global Cash
         global NamaUser
         global jam
+        global jumlahTransaksi
         os.system("taskkill /im EXCEL.EXE /f")#Untuk Meng - Close Program Excel yang running
         kembalianku=self.ids.Kembalian.text
         if kondisiPembayaran == 1:
@@ -691,7 +694,7 @@ class HomeWindow(Screen):
                 print('lengkapi data traansaksi')
                 self.Transaksi_Gagal()
             else:
-                if os.path.isfile(datafile):
+                if os.path.isfile(datafile):#mengecheck apakah file excel dengan format yang ada di variabel datafile apakah sudah tersedia
                     rb = xlrd.open_workbook(datafile)
                     wb = copy(rb)
                     sheet = rb.sheet_by_index(0)
@@ -723,6 +726,9 @@ class HomeWindow(Screen):
                         w_sheet.write(rowBarang,6,self.HargaBarang[i])
                         rowBarang+=1
                     kondisiPembayaran=1
+                    jumlahTransaksi+=1
+                    w_sheet.write(1,11,jumlahTransaksi)
+                    w_sheet.write(0,11,'JumlahTransaksi')
                     wb.save(datafile)
                     self.Transaksi_Berhasil()
                 else:
@@ -753,12 +759,16 @@ class HomeWindow(Screen):
                         rowBarang+=1
                     kondisiPembayaran=1
                     self.Transaksi_Berhasil()
+                    jumlahTransaksi+=1
+                    w_sheet.write(1,11,jumlahTransaksi)
+                    w_sheet.write(0,11,'JumlahTransaksi')
                     wb.save(datafile)
                 self.codeItem=[]
                 self.NamaProduct=[]
                 self.hargaperBarang=[]
                 self.JumlahProduct=[]
                 self.HargaBarang=[]
+                self.ids.jumlahTrans.text=str(int(jumlahTransaksi))
                 hargaBarangTotal=0
                 JdataPenjualan=1
                 totalBarang=0
@@ -796,6 +806,8 @@ class LoginWindow(Screen):
         global kondImage
         global GenderAsli
         global IntegerToRupiah
+        global datafile
+        global jumlahTransaksi
         global change#uang kembalian yang dibawa kasir dan untuk perhitungan dalam pembayaran
         loc = ("data.xls")
         wb = xlrd.open_workbook(loc)
@@ -813,7 +825,14 @@ class LoginWindow(Screen):
             print(self.password)
             print(self.namauser)
             print(self.gender)'''
+        if os.path.isfile(datafile):#mengecheck apakah file excel dengan format yang ada di variabel datafile apakah sudah tersedia
+            openJumlahTransaksi=xlrd.open_workbook(datafile)
+            sheetData = openJumlahTransaksi.sheet_by_index(0)
+            jumlahTransaksi=sheetData.cell_value(1,11)
+        else:
+            jumlahTransaksi=0
         #parameter untuk mengecheck nilai pada array
+        print('jumlah transaksi: ',jumlahTransaksi)
         UserData=-1
         user= self.ids.username_field
         pwd= self.ids.pwd_field
@@ -866,6 +885,7 @@ class LoginWindow(Screen):
                     self.manager.get_screen('Home_Win').labelText = NamaUser
                     self.manager.get_screen('Home_Win').dataWaktu = simpanwaktu
                     self.manager.get_screen('Home_Win').uang = 'Rp '+IntegerToRupiah
+                    self.manager.get_screen('Home_Win').jumlahTrans = str(int(jumlahTransaksi))
                     #untuk mengganti gambar profil cewek atau cowok
                     if self.gender[UserData]=='Male':
                         self.manager.get_screen('Home_Win').img_src = 'man_home.png'
