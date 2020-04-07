@@ -875,7 +875,7 @@ ScreenManager:
                                         size_hint_x:.4
                                 TextInput:
                                     font_size:12
-                                    #readonly:True 
+                                    readonly:True 
                                     text: root.uang                       
                                     font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
                                     color:utils.get_color_from_hex('#000000')
@@ -921,8 +921,9 @@ ScreenManager:
                                     orientation:'horizontal'
                                     TextInput:
                                         font_size:12
-                                        readonly:True                          
-                                        text:'0'
+                                        readonly:True 
+                                        id: jumlahTrans                       
+                                        text:root.jumlahTrans
                                         font_name:'C:\Windows\Fonts\Loucos Lyne - thesimssansbold.otf'
                                         color:utils.get_color_from_hex('#000000')
                                         align:'left'
