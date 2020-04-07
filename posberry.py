@@ -177,6 +177,16 @@ class InvalidPassword(Popup):
         resetText=1
         self.dismiss()
         print('keluar')
+class PasswordLettersNumber(Popup):
+    def FadePopup(self):
+        #self.manager.current='login'#program untuk pindah ke layout yang lain berdasarkan name window
+        self.dismiss()
+        print('gajadiKeluar')
+    def FadePopupYes(self):
+        global resetText
+        resetText=1
+        self.dismiss()
+        print('keluar')
 class WelcomeBack(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -941,12 +951,12 @@ class RegistWindow(Screen):
         InvalidNumbers().open()
     def InvalidPhoneNumber(self,*args):
         InvalidPhoneNumber().open()
-    def UsernameAlready(self,*args):
-        UsernameAlready().open()
     def PhoneNumberAlready(self,*args):
         PhoneNumberAlready().open()
     def InvalidPassword(self,*args):
         InvalidPassword().open()
+    def PasswordLettersNumber(self,*args):
+        PasswordLettersNumber().open()
     def regist(self):
         global rows
         global cols
