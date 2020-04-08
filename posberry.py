@@ -188,7 +188,7 @@ class PasswordLettersNumber(Popup):
         self.dismiss()
         print('keluar')
 class WelcomeBack(Screen):
-    def __init__(self, **kwargs):
+   def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.username=[]
         self.password=[]
@@ -242,8 +242,10 @@ class WelcomeBack(Screen):
             openJumlahTransaksi=xlrd.open_workbook(datafile)
             sheetData = openJumlahTransaksi.sheet_by_index(0)
             jumlahTransaksi=sheetData.cell_value(1,11)
+            JumlahUangTransaksi=sheetData.cell_value(1,12)
         else:
             jumlahTransaksi=0
+            JumlahUangTransaksi=0
         #parameter untuk mengecheck nilai pada array
         print('jumlah transaksi: ',jumlahTransaksi)
         UserData=-1
@@ -254,7 +256,8 @@ class WelcomeBack(Screen):
         uname=user.text
         passw=pwd.text
         UangKembalian=kembalian.text
-        change=UangKembalian
+        JumlahUangTransaksi+=int(UangKembalian)
+        change=JumlahUangTransaksi
         xparamUangKembalian=re.findall("[a-zA-Z]",UangKembalian)
         xparamUangKembalian2=1
         panjangChange=len(UangKembalian)
