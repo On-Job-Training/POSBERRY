@@ -219,6 +219,8 @@ class WelcomeBack(Screen):
         global kondImage
         global GenderAsli
         global IntegerToRupiah
+        global datafile
+        global jumlahTransaksi
         global change#uang kembalian yang dibawa kasir dan untuk perhitungan dalam pembayaran
         loc = ("data.xls")
         wb = xlrd.open_workbook(loc)
@@ -236,7 +238,14 @@ class WelcomeBack(Screen):
             print(self.password)
             print(self.namauser)
             print(self.gender)'''
+        if os.path.isfile(datafile):#mengecheck apakah file excel dengan format yang ada di variabel datafile apakah sudah tersedia
+            openJumlahTransaksi=xlrd.open_workbook(datafile)
+            sheetData = openJumlahTransaksi.sheet_by_index(0)
+            jumlahTransaksi=sheetData.cell_value(1,11)
+        else:
+            jumlahTransaksi=0
         #parameter untuk mengecheck nilai pada array
+        print('jumlah transaksi: ',jumlahTransaksi)
         UserData=-1
         user= self.ids.username_field
         pwd= self.ids.pwd_field
@@ -289,6 +298,7 @@ class WelcomeBack(Screen):
                     self.manager.get_screen('Home_Win').labelText = NamaUser
                     self.manager.get_screen('Home_Win').dataWaktu = simpanwaktu
                     self.manager.get_screen('Home_Win').uang = 'Rp '+IntegerToRupiah
+                    self.manager.get_screen('Home_Win').jumlahTrans = str(int(jumlahTransaksi))
                     #untuk mengganti gambar profil cewek atau cowok
                     if self.gender[UserData]=='Male':
                         self.manager.get_screen('Home_Win').img_src = 'man_home.png'
@@ -665,9 +675,16 @@ class HomeWindow(Screen):
         locale.setlocale(locale.LC_NUMERIC, 'IND')
         IntegerToRupiah = locale.format("%.*f", (2, int(kembalian)), True)
         print(IntegerToRupiah)
+    def rupiah_format(self):
+        global change
+        global IntegerToRupiah
+        locale.setlocale(locale.LC_NUMERIC, 'IND')
+        IntegerToRupiah = locale.format("%.*f", (2, int(change)), True)
+        print(IntegerToRupiah)
     def tampilanchange(self):
         global kembalian
         global Cash 
+        global change
         Cash=self.ids.pembayaran.text
         if Cash=='' or Cash=='0.0':
             Cash=0
@@ -695,6 +712,8 @@ class HomeWindow(Screen):
         global NamaUser
         global jam
         global jumlahTransaksi
+        global change
+        global IntegerToRupiah
         os.system("taskkill /im EXCEL.EXE /f")#Untuk Meng - Close Program Excel yang running
         kembalianku=self.ids.Kembalian.text
         if kondisiPembayaran == 1:
@@ -737,6 +756,11 @@ class HomeWindow(Screen):
                         rowBarang+=1
                     kondisiPembayaran=1
                     jumlahTransaksi+=1
+                    uangkembalian=int(change)-kembalian
+                    change=uangkembalian+hargaBarangTotal
+                    w_sheet.write(1,12,change)
+                    w_sheet.write(0,12,'JumlahPembayaranTotal')
+                    self.rupiah_format()
                     w_sheet.write(1,11,jumlahTransaksi)
                     w_sheet.write(0,11,'JumlahTransaksi')
                     wb.save(datafile)
@@ -770,6 +794,11 @@ class HomeWindow(Screen):
                     kondisiPembayaran=1
                     self.Transaksi_Berhasil()
                     jumlahTransaksi+=1
+                    uangkembalian=int(change)-kembalian
+                    change=uangkembalian+hargaBarangTotal
+                    w_sheet.write(1,12,change)
+                    w_sheet.write(0,12,'JumlahPembayaranTotal')
+                    self.rupiah_format()
                     w_sheet.write(1,11,jumlahTransaksi)
                     w_sheet.write(0,11,'JumlahTransaksi')
                     wb.save(datafile)
@@ -779,6 +808,7 @@ class HomeWindow(Screen):
                 self.JumlahProduct=[]
                 self.HargaBarang=[]
                 self.ids.jumlahTrans.text=str(int(jumlahTransaksi))
+                self.ids.uangTransaksi.text='Rp '+ str(IntegerToRupiah)
                 hargaBarangTotal=0
                 JdataPenjualan=1
                 totalBarang=0
@@ -839,8 +869,10 @@ class LoginWindow(Screen):
             openJumlahTransaksi=xlrd.open_workbook(datafile)
             sheetData = openJumlahTransaksi.sheet_by_index(0)
             jumlahTransaksi=sheetData.cell_value(1,11)
+            JumlahUangTransaksi=sheetData.cell_value(1,12)
         else:
             jumlahTransaksi=0
+            JumlahUangTransaksi=0
         #parameter untuk mengecheck nilai pada array
         print('jumlah transaksi: ',jumlahTransaksi)
         UserData=-1
@@ -851,7 +883,8 @@ class LoginWindow(Screen):
         uname=user.text
         passw=pwd.text
         UangKembalian=kembalian.text
-        change=UangKembalian
+        JumlahUangTransaksi+=int(UangKembalian)
+        change=JumlahUangTransaksi
         xparamUangKembalian=re.findall("[a-zA-Z]",UangKembalian)
         xparamUangKembalian2=1
         panjangChange=len(UangKembalian)
@@ -923,7 +956,16 @@ class LoginWindow(Screen):
   
         #print(IntegerToRupiah)
 #Register
-   
+class PasswordConfirm(Popup):
+    def FadePopup(self):
+        #self.manager.current='login'#program untuk pindah ke layout yang lain berdasarkan name window
+        self.dismiss()
+        print('gajadiKeluar')
+    def FadePopupYes(self):
+        global resetText
+        resetText=1
+        self.dismiss()
+        print('keluar')
 class RegistWindow(Screen):
     #popup = ObjectProperty()
     def __init__(self, **kwargs):
@@ -941,6 +983,8 @@ class RegistWindow(Screen):
         self.ids.info_regist.text=''
     def InvalidDigit(self,*args):
         InvalidDigit().open()
+    def PasswordConfirm(self,*args):
+        PasswordConfirm().open()
     def UsernameAlready(self,*args):
         UsernameAlready().open()
     def DataNotComplete(self,*args):
@@ -1039,14 +1083,15 @@ class RegistWindow(Screen):
                 self.PhoneNumberAlready()
         elif confPass!= passw:
             print('ulangi password yang anda masukkan')
-            info.text='[color=#FF0000]Ulangi Password Yang Anda Masukkan[/color]'
+            self.PasswordConfirm()
+            #info.text='[color=#FF0000]Ulangi Password Yang Anda Masukkan[/color]'
             self.passwrd.text=''
             self.confpasswr.text=''
         elif xparamPasswNumber and xparamPasswType and xparamPhoneFront==0:
             if LengthPass<8:
                 print('Minimal terdapat 8 karakter')
                 #info.text='[color=#FF0000]password minimal terdapat 8 karakter[/color]'
-                self.InvalidPassword
+                self.InvalidPassword()
                 self.passwrd.text=''
                 self.confpasswr.text=''
             else:
@@ -1077,7 +1122,8 @@ class RegistWindow(Screen):
             print('password anda harus terdiri dari huruf dan angka')
             self.passwrd.text=''
             self.confpasswr.text=''
-            info.text='[color=#FF0000]password anda harus terdiri dari huruf dan angka[/color]'
+            self.PasswordLettersNumber()
+            #info.text='[color=#FF0000]password anda harus terdiri dari huruf dan angka[/color]'
         self.username=[]
         self.nomorHand=[]
         JumlahUser=1
