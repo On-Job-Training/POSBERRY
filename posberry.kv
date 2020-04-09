@@ -3321,6 +3321,7 @@ ScreenManager:
                     size_hint_x:.1
                     text:'OK'
                     bold:True
+                    on_press: root.FadePopup()
                     font_size:15
                     color: utils.get_color_from_hex('#ffffff')
                     background_normal:''
@@ -3562,7 +3563,7 @@ ScreenManager:
                     size_hint_x:.1
                     text:'OK'
                     bold:True
-                    on_press:root.PhoneNumberAlready
+                    on_press:root.FadePopup()
                     font_size:15
                     color: utils.get_color_from_hex('#ffffff')
                     background_normal:''
