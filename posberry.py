@@ -256,8 +256,6 @@ class WelcomeBack(Screen):
         uname=user.text
         passw=pwd.text
         UangKembalian=kembalian.text
-        JumlahUangTransaksi+=int(UangKembalian)
-        change=JumlahUangTransaksi
         xparamUangKembalian=re.findall("[a-zA-Z]",UangKembalian)
         xparamUangKembalian2=1
         panjangChange=len(UangKembalian)
@@ -276,7 +274,7 @@ class WelcomeBack(Screen):
                     else:
                         xparamUangKembalian2=1
         #xparamUangKembaliancond3= UangKembalian.startswith('[0][0-9]')
-        if uname== '' or passw=='' or UangKembalian=='' :
+        if uname== '' or passw=='' or UangKembalian== None :
             #info.text='[color=#FF0000]Username ,Password,and Change  required[/color]'
             self.Required()
         elif xparamUangKembalian or xparamUangKembalian2==0 :
@@ -297,6 +295,8 @@ class WelcomeBack(Screen):
                     self.ids.money_field.text=''
                     self.ids.info.text=''
                     NamaUser=self.namauser[UserData]
+                    JumlahUangTransaksi+=int(UangKembalian)
+                    change=JumlahUangTransaksi
                     self.rupiah_format()
                     self.manager.get_screen('Home_Win').labelText = NamaUser
                     self.manager.get_screen('Home_Win').dataWaktu = simpanwaktu
@@ -886,8 +886,6 @@ class LoginWindow(Screen):
         uname=user.text
         passw=pwd.text
         UangKembalian=kembalian.text
-        JumlahUangTransaksi+=int(UangKembalian)
-        change=JumlahUangTransaksi
         xparamUangKembalian=re.findall("[a-zA-Z]",UangKembalian)
         xparamUangKembalian2=1
         panjangChange=len(UangKembalian)
@@ -906,7 +904,7 @@ class LoginWindow(Screen):
                     else:
                         xparamUangKembalian2=1
         #xparamUangKembaliancond3= UangKembalian.startswith('[0][0-9]')
-        if uname== '' or passw=='' or UangKembalian=='' :
+        if uname== '' or passw=='' or UangKembalian== None :
             #info.text='[color=#FF0000]Username ,Password,and Change  required[/color]'
             self.Required()
         elif xparamUangKembalian or xparamUangKembalian2==0 :
@@ -927,6 +925,8 @@ class LoginWindow(Screen):
                     self.ids.money_field.text=''
                     self.ids.info.text=''
                     NamaUser=self.namauser[UserData]
+                    JumlahUangTransaksi+=int(UangKembalian)
+                    change=JumlahUangTransaksi
                     self.rupiah_format()
                     self.manager.get_screen('Home_Win').labelText = NamaUser
                     self.manager.get_screen('Home_Win').dataWaktu = simpanwaktu
@@ -1038,10 +1038,14 @@ class RegistWindow(Screen):
         confPass=self.confpasswr.text
         #check username atau nomorHP yang sama
         UserData=-1
+        UserDataTelp=-1
         xparamPhoneFront=1
         for i,c in enumerate(self.username):
                 if c == emaildata:
                     UserData=i
+        for i,c in enumerate(self.nomorHand):
+                if c == nomorHP:
+                    UserDataTelp=i
         namalengkap=dataFirstName+' '+dataLastName
         xparamname=re.findall("\d",namalengkap)
         #parameter untuk memasukkan digit nomor telp pada array
@@ -1077,7 +1081,7 @@ class RegistWindow(Screen):
             self.InvalidPhoneNumber()
         #elif xparamPasswNumber == None or xparamPasswType == None:
             #print('Password harus terdiri dari huruf dan angka')
-        elif UserData >= 0:
+        elif UserData >= 0 or UserDataTelp >=0:
             if emaildata==self.username[UserData]:
                 #info.text='[color=#FF0000]Username Telah Digunakan[/color]'
                 self.UsernameAlready()
